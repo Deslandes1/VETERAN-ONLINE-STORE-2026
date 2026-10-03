@@ -1,11 +1,10 @@
 import os
 import json
-import base64
 import streamlit as st
 from PIL import Image
 
 # ---------------------------------------------------------
-# PAGE CONFIGURATION & CUSTOM DARK THEME CSS
+# PAGE CONFIGURATION & LIGHT BLUE THEME CSS
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="VETERAN ONLINE STORE",
@@ -14,55 +13,53 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-CUSTOM_CSS = """
+LIGHT_BLUE_CSS = """
 <style>
-    /* Dark Theme Base Styling */
+    /* Light Blue Theme Base Styling */
     .stApp {
-        background-color: #0d0d0e;
-        color: #e0e0e0;
+        background-color: #e6f2ff !important;
+        color: #1a2b3c;
     }
-    
-    /* Top Header Bar Styling (Inspired by Reference UI) */
+
+    /* Top Navigation Header Bar */
     .nav-bar {
-        background-color: rgba(25, 25, 28, 0.85);
-        border: 1px solid #2a2a2e;
-        border-radius: 12px;
-        padding: 12px 24px;
+        background-color: #ffffff;
+        border: 1px solid #b3d1ff;
+        border-radius: 14px;
+        padding: 16px 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0, 85, 179, 0.08);
     }
     
     .nav-title {
         font-family: 'Helvetica Neue', sans-serif;
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 800;
         letter-spacing: 2px;
-        color: #ffffff;
+        color: #0d3b66;
         margin: 0;
     }
 
     /* Hero Banner Section */
     .hero-container {
-        background: linear-gradient(180deg, rgba(20,20,22,0.6) 0%, rgba(13,13,14,1) 100%), 
-                    url('https://images.unsplash.com/photo-1556905055-8f358a7a47b2?q=80&w=1200&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
+        background: linear-gradient(135deg, #0d3b66 0%, #1d63b8 100%);
         border-radius: 16px;
-        padding: 50px 30px;
-        border: 1px solid #26262a;
+        padding: 45px 35px;
+        color: #ffffff;
         margin-bottom: 30px;
-        text-align: left;
+        box-shadow: 0 6px 18px rgba(13, 59, 102, 0.15);
     }
 
     .hero-badge {
         background-color: #e63946;
-        color: white;
+        color: #ffffff;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 1.5px;
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 20px;
         text-transform: uppercase;
         display: inline-block;
@@ -70,68 +67,83 @@ CUSTOM_CSS = """
     }
 
     .hero-title {
-        font-size: 42px;
+        font-size: 38px;
         font-weight: 900;
         letter-spacing: 1px;
         color: #ffffff;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+        color: #d0e3ff;
+        font-size: 16px;
+        margin: 0;
     }
 
     /* Card Layout for Products */
     .product-card {
-        background-color: #161619;
-        border: 1px solid #28282d;
+        background-color: #ffffff;
+        border: 1px solid #cce0ff;
         border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 20px;
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        padding: 18px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     
     .product-card:hover {
-        border-color: #e63946;
+        border-color: #1d63b8;
+        box-shadow: 0 6px 16px rgba(29, 99, 184, 0.15);
         transform: translateY(-2px);
     }
 
     .product-category {
-        color: #e63946;
+        color: #1d63b8;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .product-title {
-        font-size: 18px;
+        font-size: 19px;
         font-weight: 700;
-        color: #ffffff;
-        margin: 4px 0;
+        color: #0d3b66;
+        margin: 6px 0;
     }
 
     .product-price {
-        font-size: 20px;
+        font-size: 22px;
         font-weight: 800;
-        color: #2ecc71;
-        margin-bottom: 8px;
+        color: #2e7d32;
+        margin-bottom: 6px;
     }
 
-    /* Streamlit Button Overrides */
+    /* Streamlit Input & Radio Button Styling */
+    div.stRadio > div {
+        background-color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 30px;
+        border: 1px solid #b3d1ff;
+    }
+
+    /* Button Styling */
     div.stButton > button {
         border-radius: 20px !important;
-        background-color: #222226 !important;
+        background-color: #0d3b66 !important;
         color: #ffffff !important;
-        border: 1px solid #38383e !important;
+        border: none !important;
         font-weight: 600 !important;
-        transition: all 0.3s ease !important;
+        transition: all 0.2s ease !important;
     }
 
     div.stButton > button:hover {
-        background-color: #e63946 !important;
-        border-color: #e63946 !important;
+        background-color: #1d63b8 !important;
         color: #ffffff !important;
     }
 </style>
 """
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+st.markdown(LIGHT_BLUE_CSS, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # DATA PERSISTENCE & INITIALIZATION
@@ -189,7 +201,7 @@ mode = st.radio(
     label_visibility="collapsed"
 )
 
-st.markdown("<hr style='border: 1px solid #222225; margin-bottom: 25px;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #b3d1ff; margin-bottom: 25px;'>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # MODE 1: STOREFRONT
@@ -200,8 +212,8 @@ if mode == "🏪 Storefront":
     <div class="hero-container">
         <span class="hero-badge">OFFICIAL STORE</span>
         <div class="hero-title">VETERAN APPAREL COLLECTION</div>
-        <p style="color: #b0b0b5; max-width: 600px;">
-            Explore top-tier streetwear and apparel crafted for comfort, tactical style, and durability.
+        <p class="hero-subtitle">
+            Explore top-tier streetwear and apparel crafted for comfort, style, and durability.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -229,7 +241,7 @@ if mode == "🏪 Storefront":
                     <span class="product-category">{prod['category']}</span>
                     <div class="product-title">{prod['name']}</div>
                     <div class="product-price">${prod['price']:.2f}</div>
-                    <p style="color: #888; font-size: 13px;">{prod.get('description', '')}</p>
+                    <p style="color: #556b82; font-size: 13px;">{prod.get('description', '')}</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -300,7 +312,9 @@ elif mode == "⚙️ Owner Dashboard":
                     if uploaded_file is not None:
                         img_path = os.path.join(IMAGE_DIR, f"{int(os.urandom(4).hex(), 16)}_{uploaded_file.name}")
                         image = Image.open(uploaded_file)
-                        image.save(img_path)
+                        # Compress image for fast loading
+                        image.thumbnail((800, 800))
+                        image.save(img_path, optimize=True, quality=85)
 
                     new_id = max([p["id"] for p in st.session_state.products], default=0) + 1
                     new_item = {
