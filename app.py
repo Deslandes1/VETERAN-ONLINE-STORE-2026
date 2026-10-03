@@ -208,6 +208,9 @@ if "products" not in st.session_state:
 if "cart" not in st.session_state:
     st.session_state.cart = []
 
+if "owner_authenticated" not in st.session_state:
+    st.session_state.owner_authenticated = False
+
 # ---------------------------------------------------------
 # HEADER / NAVIGATION BAR
 # ---------------------------------------------------------
@@ -238,7 +241,6 @@ if mode == "🏪 Storefront":
         
         with col_left:
             st.markdown('<span class="hero-badge">OFFICIAL STORE</span>', unsafe_allow_html=True)
-            # Corrected Classic Design Typography
             st.markdown('<div class="classic-title">Veteran Apparel Collection</div>', unsafe_allow_html=True)
             st.markdown('<p class="hero-subtitle">Living Legends Streetwear & Custom Gear</p>', unsafe_allow_html=True)
             
@@ -317,87 +319,115 @@ elif mode == "🛒 Shopping Cart":
             st.session_state.cart = []
 
 # ---------------------------------------------------------
-# MODE 3: OWNER DASHBOARD (ADMIN CONTROLS)
+# MODE 3: OWNER DASHBOARD (PROTECTED WITH PASSWORD)
 # ---------------------------------------------------------
 elif mode == "⚙️ Owner Dashboard":
     st.header("⚙️ Owner Management Portal")
-    st.caption("Manage items, upload new clothing images, edit prices, or remove products.")
 
-    tab1, tab2 = st.tabs(["➕ Upload New Item", "✏️ Edit & Delete Items"])
+    # Get target password from secrets or default fallback
+    TARGET_PASSWORD = st.secrets.get("owner_password", "1804").strip()
 
-    # TAB 1: ADD NEW CLOTHING ITEM
-    with tab1:
-        st.subheader("Add New Apparel to Store")
-        with st.form("add_product_form", clear_on_submit=True):
-            new_name = st.text_input("Item Name")
-            new_cat = st.selectbox("Category", ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"])
-            new_price = st.number_input("Price ($)", min_value=0.0, step=1.00, value=25.00)
-            new_desc = st.text_area("Description")
-            uploaded_file = st.file_uploader("Upload Image from Media", type=["png", "jpg", "jpeg", "webp"])
-
-            submitted = st.form_submit_button("Upload & Save Product")
+    # Password Protection Check
+    if not st.session_state.owner_authenticated:
+        st.subheader("🔐 Owner Authentication Required")
+        st.write("Please enter the owner password to access uploading and managing items.")
+        
+        with st.form("owner_login_form"):
+            input_pwd = st.text_input("Owner Password", type="password")
+            login_submitted = st.form_submit_button("Unlock Dashboard")
             
-            if submitted:
-                if not new_name:
-                    st.error("Please enter an item name.")
+            if login_submitted:
+                if input_pwd.strip() == TARGET_PASSWORD:
+                    st.session_state.owner_authenticated = True
+                    st.success("Access Granted!")
+                    st.rerun()
                 else:
-                    img_path = ""
-                    if uploaded_file is not None:
-                        img_path = os.path.join(IMAGE_DIR, f"{int(os.urandom(4).hex(), 16)}_{uploaded_file.name}")
-                        image = Image.open(uploaded_file)
-                        image.thumbnail((800, 800))
-                        image.save(img_path, optimize=True, quality=85)
+                    st.error("Incorrect password. Access denied.")
+    else:
+        # Authenticated Owner View
+        col_hdr1, col_hdr2 = st.columns([4, 1])
+        with col_hdr1:
+            st.caption("Manage items, upload new clothing images, edit prices, or remove products.")
+        with col_hdr2:
+            if st.button("🔒 Logout Owner"):
+                st.session_state.owner_authenticated = False
+                st.rerun()
 
-                    new_id = max([p["id"] for p in st.session_state.products], default=0) + 1
-                    new_item = {
-                        "id": new_id,
-                        "name": new_name,
-                        "category": new_cat,
-                        "price": float(new_price),
-                        "description": new_desc,
-                        "image": img_path
-                    }
+        tab1, tab2 = st.tabs(["➕ Upload New Item", "✏️ Edit & Delete Items"])
 
-                    st.session_state.products.append(new_item)
-                    save_products(st.session_state.products)
-                    st.success(f"Successfully added '{new_name}' to the catalog!")
+        # TAB 1: ADD NEW CLOTHING ITEM
+        with tab1:
+            st.subheader("Add New Apparel to Store")
+            with st.form("add_product_form", clear_on_submit=True):
+                new_name = st.text_input("Item Name")
+                new_cat = st.selectbox("Category", ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"])
+                new_price = st.number_input("Price ($)", min_value=0.0, step=1.00, value=25.00)
+                new_desc = st.text_area("Description")
+                uploaded_file = st.file_uploader("Upload Image from Media", type=["png", "jpg", "jpeg", "webp"])
 
-    # TAB 2: EDIT & DELETE EXISTING ITEMS
-    with tab2:
-        st.subheader("Manage Catalog")
-        if not st.session_state.products:
-            st.write("No products available to edit.")
-        else:
-            for idx, prod in enumerate(st.session_state.products):
-                with st.expander(f"📦 {prod['name']} (${prod['price']:.2f}) - {prod['category']}"):
-                    col_a, col_b = st.columns([2, 1])
-                    
-                    with col_a:
-                        updated_name = st.text_input("Item Name", prod["name"], key=f"edit_name_{prod['id']}")
-                        updated_cat = st.selectbox("Category", ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"], index=["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"].index(prod["category"]) if prod["category"] in ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"] else 0, key=f"edit_cat_{prod['id']}")
-                        updated_price = st.number_input("Price ($)", min_value=0.0, value=float(prod["price"]), step=1.00, key=f"edit_price_{prod['id']}")
-                        updated_desc = st.text_area("Description", prod.get("description", ""), key=f"edit_desc_{prod['id']}")
+                submitted = st.form_submit_button("Upload & Save Product")
+                
+                if submitted:
+                    if not new_name:
+                        st.error("Please enter an item name.")
+                    else:
+                        img_path = ""
+                        if uploaded_file is not None:
+                            img_path = os.path.join(IMAGE_DIR, f"{int(os.urandom(4).hex(), 16)}_{uploaded_file.name}")
+                            image = Image.open(uploaded_file)
+                            image.thumbnail((800, 800))
+                            image.save(img_path, optimize=True, quality=85)
+
+                        new_id = max([p["id"] for p in st.session_state.products], default=0) + 1
+                        new_item = {
+                            "id": new_id,
+                            "name": new_name,
+                            "category": new_cat,
+                            "price": float(new_price),
+                            "description": new_desc,
+                            "image": img_path
+                        }
+
+                        st.session_state.products.append(new_item)
+                        save_products(st.session_state.products)
+                        st.success(f"Successfully added '{new_name}' to the catalog!")
+
+        # TAB 2: EDIT & DELETE EXISTING ITEMS
+        with tab2:
+            st.subheader("Manage Catalog")
+            if not st.session_state.products:
+                st.write("No products available to edit.")
+            else:
+                for idx, prod in enumerate(st.session_state.products):
+                    with st.expander(f"📦 {prod['name']} (${prod['price']:.2f}) - {prod['category']}"):
+                        col_a, col_b = st.columns([2, 1])
                         
-                        btn1, btn2 = st.columns(2)
-                        with btn1:
-                            if st.button("Save Changes", key=f"save_{prod['id']}"):
-                                prod["name"] = updated_name
-                                prod["category"] = updated_cat
-                                prod["price"] = float(updated_price)
-                                prod["description"] = updated_desc
-                                save_products(st.session_state.products)
-                                st.success("Updated successfully!")
-                                st.rerun()
+                        with col_a:
+                            updated_name = st.text_input("Item Name", prod["name"], key=f"edit_name_{prod['id']}")
+                            updated_cat = st.selectbox("Category", ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"], index=["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"].index(prod["category"]) if prod["category"] in ["Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"] else 0, key=f"edit_cat_{prod['id']}")
+                            updated_price = st.number_input("Price ($)", min_value=0.0, value=float(prod["price"]), step=1.00, key=f"edit_price_{prod['id']}")
+                            updated_desc = st.text_area("Description", prod.get("description", ""), key=f"edit_desc_{prod['id']}")
+                            
+                            btn1, btn2 = st.columns(2)
+                            with btn1:
+                                if st.button("Save Changes", key=f"save_{prod['id']}"):
+                                    prod["name"] = updated_name
+                                    prod["category"] = updated_cat
+                                    prod["price"] = float(updated_price)
+                                    prod["description"] = updated_desc
+                                    save_products(st.session_state.products)
+                                    st.success("Updated successfully!")
+                                    st.rerun()
 
-                        with btn2:
-                            if st.button("Delete Item", key=f"del_{prod['id']}"):
-                                st.session_state.products.pop(idx)
-                                save_products(st.session_state.products)
-                                st.warning("Item deleted!")
-                                st.rerun()
+                            with btn2:
+                                if st.button("Delete Item", key=f"del_{prod['id']}"):
+                                    st.session_state.products.pop(idx)
+                                    save_products(st.session_state.products)
+                                    st.warning("Item deleted!")
+                                    st.rerun()
 
-                    with col_b:
-                        if prod.get("image") and os.path.exists(prod["image"]):
-                            st.image(prod["image"], caption="Current Image", use_column_width=True)
-                        else:
-                            st.info("No image attached.")
+                        with col_b:
+                            if prod.get("image") and os.path.exists(prod["image"]):
+                                st.image(prod["image"], caption="Current Image", use_column_width=True)
+                            else:
+                                st.info("No image attached.")
