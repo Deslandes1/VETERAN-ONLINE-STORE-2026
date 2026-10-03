@@ -4,7 +4,7 @@ import streamlit as st
 from PIL import Image
 
 # ---------------------------------------------------------
-# PAGE CONFIGURATION & LIGHT BLUE THEME CSS
+# PAGE CONFIGURATION & CUSTOM VTRAN THEME CSS
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="VETERAN ONLINE STORE",
@@ -13,92 +13,102 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-LIGHT_BLUE_CSS = """
+# Direct raw media URLs from GitHub repository
+VIDEO_RAW_URL = "https://raw.githubusercontent.com/Deslandes1/VETERAN-ONLINE-STORE-2026/main/V002.mp4"
+IMAGE_RAW_URL = "https://raw.githubusercontent.com/Deslandes1/VETERAN-ONLINE-STORE-2026/main/V001.jpeg"
+
+VTRAN_THEME_CSS = """
 <style>
-    /* Light Blue Theme Base Styling */
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;700;900&display=swap');
+
+    /* Background matching warm wood grain tone */
     .stApp {
-        background-color: #e6f2ff !important;
-        color: #1a2b3c;
+        background-color: #120b07 !important;
+        background-image: linear-gradient(180deg, #180e0a 0%, #0d0704 100%);
+        color: #f0e6df;
     }
 
-    /* Top Navigation Header Bar */
+    /* Top Navigation Bar */
     .nav-bar {
-        background-color: #ffffff;
-        border: 1px solid #b3d1ff;
+        background: rgba(26, 15, 10, 0.9);
+        border: 1px solid #3d2316;
         border-radius: 14px;
         padding: 16px 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0, 85, 179, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
     
     .nav-title {
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: 'Montserrat', sans-serif;
         font-size: 26px;
-        font-weight: 800;
+        font-weight: 900;
         letter-spacing: 2px;
-        color: #0d3b66;
+        color: #d90429;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         margin: 0;
     }
 
-    /* Hero Banner Section */
+    /* Hero Banner Layout */
     .hero-container {
-        background: linear-gradient(135deg, #0d3b66 0%, #1d63b8 100%);
-        border-radius: 16px;
-        padding: 45px 35px;
-        color: #ffffff;
+        background: linear-gradient(135deg, #24140d 0%, #120905 100%);
+        border: 1px solid #4a2b1c;
+        border-radius: 18px;
+        padding: 30px;
         margin-bottom: 30px;
-        box-shadow: 0 6px 18px rgba(13, 59, 102, 0.15);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.7);
     }
 
     .hero-badge {
-        background-color: #e63946;
+        background-color: #d90429;
         color: #ffffff;
         font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        padding: 5px 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        padding: 5px 14px;
         border-radius: 20px;
         text-transform: uppercase;
         display: inline-block;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
     }
 
-    .hero-title {
-        font-size: 38px;
-        font-weight: 900;
-        letter-spacing: 1px;
+    /* Classic Script Typography */
+    .classic-title {
+        font-family: 'Great Vibes', cursive;
+        font-size: 52px;
+        font-weight: 400;
         color: #ffffff;
-        margin-bottom: 8px;
+        text-shadow: 2px 2px 8px rgba(217, 4, 41, 0.6);
+        margin: 5px 0 10px 0;
+        line-height: 1.1;
     }
 
     .hero-subtitle {
-        color: #d0e3ff;
-        font-size: 16px;
-        margin: 0;
+        color: #c7b2a6;
+        font-size: 15px;
+        margin-bottom: 20px;
     }
 
-    /* Card Layout for Products */
+    /* Product Card Styling */
     .product-card {
-        background-color: #ffffff;
-        border: 1px solid #cce0ff;
+        background-color: #1e110b;
+        border: 1px solid #382014;
         border-radius: 14px;
         padding: 18px;
         margin-bottom: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        transition: transform 0.2s ease, border-color 0.2s ease;
     }
     
     .product-card:hover {
-        border-color: #1d63b8;
-        box-shadow: 0 6px 16px rgba(29, 99, 184, 0.15);
-        transform: translateY(-2px);
+        border-color: #d90429;
+        transform: translateY(-3px);
     }
 
     .product-category {
-        color: #1d63b8;
+        color: #d90429;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
@@ -106,44 +116,44 @@ LIGHT_BLUE_CSS = """
     }
 
     .product-title {
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 700;
-        color: #0d3b66;
+        color: #ffffff;
         margin: 6px 0;
     }
 
     .product-price {
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 800;
-        color: #2e7d32;
+        color: #2ecc71;
         margin-bottom: 6px;
     }
 
-    /* Streamlit Input & Radio Button Styling */
+    /* Navigation Radio Button Bar */
     div.stRadio > div {
-        background-color: #ffffff;
+        background-color: #1e110b;
         padding: 8px 16px;
         border-radius: 30px;
-        border: 1px solid #b3d1ff;
+        border: 1px solid #382014;
     }
 
-    /* Button Styling */
+    /* Custom Buttons */
     div.stButton > button {
         border-radius: 20px !important;
-        background-color: #0d3b66 !important;
+        background-color: #d90429 !important;
         color: #ffffff !important;
         border: none !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         transition: all 0.2s ease !important;
     }
 
     div.stButton > button:hover {
-        background-color: #1d63b8 !important;
-        color: #ffffff !important;
+        background-color: #ef233c !important;
+        box-shadow: 0 0 10px rgba(217, 4, 41, 0.5) !important;
     }
 </style>
 """
-st.markdown(LIGHT_BLUE_CSS, unsafe_allow_html=True)
+st.markdown(VTRAN_THEME_CSS, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # DATA PERSISTENCE & INITIALIZATION
@@ -193,7 +203,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs
+# Navigation Modes
 mode = st.radio(
     "Navigate", 
     options=["🏪 Storefront", "🛒 Shopping Cart", "⚙️ Owner Dashboard"], 
@@ -201,22 +211,31 @@ mode = st.radio(
     label_visibility="collapsed"
 )
 
-st.markdown("<hr style='border: 1px solid #b3d1ff; margin-bottom: 25px;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #3d2316; margin-bottom: 25px;'>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # MODE 1: STOREFRONT
 # ---------------------------------------------------------
 if mode == "🏪 Storefront":
-    # Hero Banner
-    st.markdown("""
-    <div class="hero-container">
-        <span class="hero-badge">OFFICIAL STORE</span>
-        <div class="hero-title">VETERAN APPAREL COLLECTION</div>
-        <p class="hero-subtitle">
-            Explore top-tier streetwear and apparel crafted for comfort, style, and durability.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    # HERO SECTION (Classic typography, background video left, static emblem top right)
+    with st.container():
+        st.markdown('<div class="hero-container">', unsafe_allow_html=True)
+        col_left, col_right = st.columns([1.6, 1])
+        
+        with col_left:
+            st.markdown('<span class="hero-badge">OFFICIAL STORE</span>', unsafe_allow_html=True)
+            # Corrected Classic Design Typography
+            st.markdown('<div class="classic-title">Veteran Apparel Collection</div>', unsafe_allow_html=True)
+            st.markdown('<p class="hero-subtitle">Living Legends Streetwear & Custom Gear</p>', unsafe_allow_html=True)
+            
+            # Constantly Playing Main Video from GitHub
+            st.video(VIDEO_RAW_URL, autoplay=True, loop=True, muted=True)
+
+        with col_right:
+            # Top-Right Static Picture (V001.jpeg) from GitHub
+            st.image(IMAGE_RAW_URL, caption="VTRAN - Living Legends", use_column_width=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Category Filter
     categories = ["All", "Hoodie", "Shorts", "T-shirt", "Sweat pants", "Sweat shirts", "Ski mask"]
@@ -241,11 +260,11 @@ if mode == "🏪 Storefront":
                     <span class="product-category">{prod['category']}</span>
                     <div class="product-title">{prod['name']}</div>
                     <div class="product-price">${prod['price']:.2f}</div>
-                    <p style="color: #556b82; font-size: 13px;">{prod.get('description', '')}</p>
+                    <p style="color: #a89487; font-size: 13px;">{prod.get('description', '')}</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Display image if available
+                # Display uploaded product image or placeholder
                 if prod.get("image") and os.path.exists(prod["image"]):
                     st.image(prod["image"], use_column_width=True)
                 else:
@@ -312,7 +331,6 @@ elif mode == "⚙️ Owner Dashboard":
                     if uploaded_file is not None:
                         img_path = os.path.join(IMAGE_DIR, f"{int(os.urandom(4).hex(), 16)}_{uploaded_file.name}")
                         image = Image.open(uploaded_file)
-                        # Compress image for fast loading
                         image.thumbnail((800, 800))
                         image.save(img_path, optimize=True, quality=85)
 
