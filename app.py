@@ -51,6 +51,28 @@ VTRAN_THEME_CSS = """
         margin: 0;
     }
 
+    /* BRIGHT WHITE NAVIGATION LABELS & BUTTONS */
+    div.stRadio > div {
+        background-color: #1e110b !important;
+        padding: 10px 20px !important;
+        border-radius: 30px !important;
+        border: 1px solid #4a2b1c !important;
+    }
+
+    div.stRadio label, div.stRadio label p, div.stRadio div[role="radiogroup"] span {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        font-size: 17px !important;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.9) !important;
+    }
+
+    /* Tabs Text Styling in Bright White */
+    button[data-baseweb="tab"] div {
+        color: #ffffff !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+    }
+
     /* Hero Banner Layout */
     .hero-container {
         background: linear-gradient(135deg, #24140d 0%, #120905 100%);
@@ -129,14 +151,6 @@ VTRAN_THEME_CSS = """
         margin-bottom: 6px;
     }
 
-    /* Navigation Radio Button Bar */
-    div.stRadio > div {
-        background-color: #1e110b;
-        padding: 8px 16px;
-        border-radius: 30px;
-        border: 1px solid #382014;
-    }
-
     /* Custom Buttons */
     div.stButton > button {
         border-radius: 20px !important;
@@ -203,7 +217,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation Modes
+# Navigation Modes with Bright White Text Options
 mode = st.radio(
     "Navigate", 
     options=["🏪 Storefront", "🛒 Shopping Cart", "⚙️ Owner Dashboard"], 
