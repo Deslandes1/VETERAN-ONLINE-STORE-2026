@@ -4,10 +4,10 @@ import streamlit as st
 from PIL import Image
 
 # ---------------------------------------------------------
-# PAGE CONFIGURATION & CUSTOM VTRAN THEME CSS
+# PAGE CONFIGURATION & CUSTOM VTR4N THEME CSS
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="VTRAN ONLINE STORE",
+    page_title="VTR4N ONLINE STORE",
     page_icon="👕",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -179,9 +179,9 @@ if not os.path.exists(IMAGE_DIR):
     os.makedirs(IMAGE_DIR)
 
 DEFAULT_PRODUCTS = [
-    {"id": 1, "name": "VTRAN Tactical Hoodie", "category": "Hoodie", "price": 55.00, "description": "Premium heavy cotton blend hoodie.", "image": ""},
+    {"id": 1, "name": "VTR4N Tactical Hoodie", "category": "Hoodie", "price": 55.00, "description": "Premium heavy cotton blend hoodie.", "image": ""},
     {"id": 2, "name": "Pro Fitness Shorts", "category": "Shorts", "price": 30.00, "description": "Lightweight breathable gym shorts.", "image": ""},
-    {"id": 3, "name": "Classic VTRAN T-Shirt", "category": "T-shirt", "price": 25.00, "description": "100% Ring-spun cotton soft tee.", "image": ""},
+    {"id": 3, "name": "Classic VTR4N T-Shirt", "category": "T-shirt", "price": 25.00, "description": "100% Ring-spun cotton soft tee.", "image": ""},
     {"id": 4, "name": "Urban Sweat Pants", "category": "Sweat pants", "price": 45.00, "description": "Comfortable tailored fleece sweatpants.", "image": ""},
     {"id": 5, "name": "Heavyweight Sweatshirt", "category": "Sweat shirts", "price": 50.00, "description": "Cozy pullover crewneck sweatshirt.", "image": ""},
     {"id": 6, "name": "Winter Tactical Ski Mask", "category": "Ski mask", "price": 20.00, "description": "Windproof thermal balaclava.", "image": ""}
@@ -216,7 +216,7 @@ if "owner_authenticated" not in st.session_state:
 # ---------------------------------------------------------
 st.markdown("""
 <div class="nav-bar">
-    <div class="nav-title">VTRAN ONLINE STORE</div>
+    <div class="nav-title">VTR4N ONLINE STORE</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -241,7 +241,7 @@ if mode == "🏪 Storefront":
         
         with col_left:
             st.markdown('<span class="hero-badge">OFFICIAL STORE</span>', unsafe_allow_html=True)
-            st.markdown('<div class="classic-title">VTRAN Apparel Collection</div>', unsafe_allow_html=True)
+            st.markdown('<div class="classic-title">VTR4N Apparel Collection</div>', unsafe_allow_html=True)
             st.markdown('<p class="hero-subtitle">Living Legends Streetwear & Custom Gear</p>', unsafe_allow_html=True)
             
             # Constantly Playing Main Video from GitHub
@@ -249,7 +249,7 @@ if mode == "🏪 Storefront":
 
         with col_right:
             # Top-Right Static Picture (V001.jpeg) from GitHub
-            st.image(IMAGE_RAW_URL, caption="VTRAN - Living Legends", use_column_width=True)
+            st.image(IMAGE_RAW_URL, caption="VTR4N - Living Legends", use_column_width=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -322,7 +322,7 @@ elif mode == "🛒 Shopping Cart":
 # MODE 3: OWNER DASHBOARD (PROTECTED WITH PASSWORD)
 # ---------------------------------------------------------
 elif mode == "⚙️ Owner Dashboard":
-    st.header("⚙️️ Owner Management Portal")
+    st.header("⚙ Owner Management Portal")
 
     # Get target password from secrets or default fallback
     TARGET_PASSWORD = st.secrets.get("owner_password", "1804").strip()
